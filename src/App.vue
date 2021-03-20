@@ -116,7 +116,7 @@ export default {
         prevText3 = `&param_text_prev3=${state.prevText3}`;
       }
 
-      let url = `https://jlp.yahooapis.jp/NLUService/V1/analyze?appid=dj00aiZpPTE3ak5ST3Fjd2RtTCZzPWNvbnN1bWVyc2VjcmV0Jng9MjY-&intext=${inputMessage.value}${prevText1}${prevText2}${prevText3}`;
+      let url = `https://jlp.yahooapis.jp/NLUService/V1/analyze?appid=dj00aiZpPTE3ak5ST3Fjd2RtTCZzPWNvbnN1bWVyc2VjcmV0Jng9MjY-&sample0=shopping,テレビ&intext=${inputMessage.value}${prevText1}${prevText2}${prevText3}`;
       axios
         .get(url)
         .then((res) => {
@@ -130,20 +130,6 @@ export default {
             message.content = "ちょっとなに言ってるか分かんない";
           }
           messagesRef.push(message);
-        })
-        .catch((err) => {
-          console.log("err: ", err);
-        });
-    };
-
-    const GetText = () => {
-      let url = "http://localhost:3000";
-      axios
-        .get(url)
-        .then((res) => {
-          let json = JSON.parse(res.data);
-          state.replyText = json[0].replyText;
-          //   console.log(json);
         })
         .catch((err) => {
           console.log("err: ", err);
@@ -190,7 +176,6 @@ export default {
       inputMessage,
       SendMessage,
       Logout,
-      GetText,
       GetAIText,
       GetMessages,
     };
