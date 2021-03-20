@@ -45,6 +45,7 @@
           />
           <input type="submit" value="Send" />
         </form>
+        <div class="redred">{{ state.sentiment }}</div>
       </footer>
     </div>
   </div>
@@ -54,6 +55,7 @@
 import { reactive, onMounted, ref } from "vue";
 import axios from "axios";
 import db from "./db";
+import getSentiment from "./sentiment";
 
 export default {
   setup() {
@@ -66,6 +68,7 @@ export default {
       prevText1: "",
       prevText2: "",
       prevText3: "",
+      sentiment: 0.0,
     });
 
     const Login = () => {
@@ -73,7 +76,6 @@ export default {
         state.username = inputUsername.value;
         inputUsername.value = "";
         GetMessages();
-        console.log(state);
       }
     };
 
@@ -96,6 +98,7 @@ export default {
       messagesRef.push(message);
 
       GetAIText(message, messagesRef);
+      GetSentiment(message.content);
 
       inputMessage.value = "";
 
@@ -136,20 +139,6 @@ export default {
         });
     };
 
-    const GetText = () => {
-      let url = "http://localhost:3000";
-      axios
-        .get(url)
-        .then((res) => {
-          let json = JSON.parse(res.data);
-          state.replyText = json[0].replyText;
-          //   console.log(json);
-        })
-        .catch((err) => {
-          console.log("err: ", err);
-        });
-    };
-
     const GetMessages = () => {
       const messagesRef = db.database().ref(`${state.username}/messages`);
       if (messagesRef) {
@@ -181,6 +170,14 @@ export default {
       }
     };
 
+    const GetSentiment = async (message) => {
+      await getSentiment(message)
+        .then((sentiment) => {
+          state.sentiment = sentiment.magnitude * sentiment.score;
+        })
+        .catch((err) => console.error(err));
+    };
+
     onMounted(() => {});
 
     return {
@@ -190,15 +187,18 @@ export default {
       inputMessage,
       SendMessage,
       Logout,
-      GetText,
       GetAIText,
       GetMessages,
+      GetSentiment,
     };
   },
 };
 </script>
 
 <style lang="scss">
+.redred {
+  background: red;
+}
 * {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
