@@ -52,9 +52,11 @@ export default defineComponent({
   border-radius: 3px;
   color: black;
   cursor: pointer;
-  padding: 1px 5px;
-  margin: 10px 0px 0 0;
-  display: inline-block;
+  padding: 2px 5px;
+  text-align: right;
+  margin-top: 10px;
+  // display: inline-block;
+  float: right;
 }
 
 label {
