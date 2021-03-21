@@ -53,6 +53,11 @@
       </section>
       <footer>
         <form @submit.prevent="SendMessage">
+          <p v-show="state.neutral" class="face">😌</p>
+          <p v-show="state.veryNegative" class="face">😣</p>
+          <p v-show="state.negative" class="face">😞</p>
+          <p v-show="state.veryPositive" class="face">🤗</p>
+          <p v-show="state.positive" class="face">😄</p>
           <input
             type="text"
             v-model="inputMessage"
@@ -283,6 +288,11 @@ $veryNegative: #1809eb;
 $negative: #54a6f2;
 $veryPositive: #ff5a2c;
 $positive: #ff8f2c;
+
+.face {
+  margin: 9px 10px 5px 0px;
+  //   margin: 10px, 10px, 10px, 10px;
+}
 
 * {
   font-family: Avenir, Helvetica, Arial, sans-serif;
