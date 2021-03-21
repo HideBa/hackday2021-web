@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import { storage } from "./firebase";
 
 export default defineComponent({
