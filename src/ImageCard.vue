@@ -1,6 +1,6 @@
 <template>
-  <div class="image-card">
-    <img :src="imagePath" />
+  <div>
+    <img class="image-card" :src="imagePath" />
   </div>
 </template>
 
@@ -14,7 +14,7 @@ export default {
 
 <style scoped>
 .image-card {
-  width: 100px;
-  height: 100px;
+  width: 200px;
+  height: 200px;
 }
 </style>
