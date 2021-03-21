@@ -73,6 +73,7 @@
           {{ state.sentiment }}
         </div>
       </footer>
+      <diary @getTodaysMessage="getTodaysMessage" />
     </div>
   </div>
 </template>
@@ -84,9 +85,10 @@ import db from "./firebase";
 import getSentiment from "./sentiment";
 import ImageUpload from "./ImageUpload.vue";
 import ImageCard from "./ImageCard.vue";
+import Diary from "./Diary.vue";
 
 export default {
-  components: { ImageUpload, ImageCard },
+  components: { ImageUpload, ImageCard, Diary },
   setup() {
     const inputUsername = ref("");
     const inputMessage = ref("");
@@ -133,6 +135,7 @@ export default {
         content: inputMessage.value,
         imageUrl: state.imageUrl,
         sentiment: state.sentiment,
+        createdAt: Date.now(),
       };
 
       messagesRef.push(message);
@@ -193,6 +196,7 @@ export default {
               content: data[key].content,
               imageUrl: data[key].imageUrl,
               sentiment: data[key].sentiment,
+              createdAt: data[key].createdAt,
             });
           });
           if (messages.length > 1) {
@@ -218,11 +222,24 @@ export default {
         username: state.username,
         content: "image",
         imageUrl: imageUrlPath,
+        createdAt: Date.now(),
         sentiment: 0,
       };
       messagesRef.push(message);
 
       GetMessages();
+    };
+
+    const getTodaysMessage = () => {
+      console.log("called----------");
+      const today = new Date(Date.now());
+      const todaysMessage = state.messages.filter((m) => {
+        const date = new Date(Date.parse(m.createdAt));
+        console.log("today -------", today.getDate);
+        console.log("date-------------", date.getDate);
+        return date.getDate === today.getDate;
+      });
+      return todaysMessage;
     };
 
     const GetSentiment = async (message) => {
@@ -283,6 +300,7 @@ export default {
       GetSentiment,
       sendImageUrl,
       JudgeSentiment,
+      getTodaysMessage,
     };
   },
 };
