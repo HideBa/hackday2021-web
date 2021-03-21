@@ -1,5 +1,8 @@
 <template>
-  <input type="file" @change="onFileChange" />
+  <label class="imageSec">
+    Select a photo
+    <input type="file" @change="onFileChange" />
+  </label>
 </template>
 
 <script>
@@ -40,3 +43,23 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped lang="scss">
+.imageSec {
+  background: gainsboro;
+  border: 1px solid #0a0;
+  border-color: black;
+  border-radius: 3px;
+  color: black;
+  cursor: pointer;
+  padding: 1px 5px;
+  margin: 10px 0px 0 0;
+  display: inline-block;
+}
+
+label {
+  input {
+    display: none;
+  }
+}
+</style>

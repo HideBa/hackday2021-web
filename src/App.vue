@@ -53,6 +53,11 @@
       </section>
       <footer>
         <form @submit.prevent="SendMessage">
+          <p v-show="state.neutral" class="face">😌</p>
+          <p v-show="state.veryNegative" class="face">😣</p>
+          <p v-show="state.negative" class="face">😞</p>
+          <p v-show="state.veryPositive" class="face">🤗</p>
+          <p v-show="state.positive" class="face">😄</p>
           <input
             type="text"
             v-model="inputMessage"
@@ -61,17 +66,6 @@
           <input type="submit" value="Send" />
         </form>
         <image-upload @sendImageUrl="sendImageUrl" />
-        <div
-          :class="{
-            neutral: state.neutral,
-            veryNegative: state.veryNegative,
-            negative: state.negative,
-            veryPositive: state.veryPositive,
-            positive: state.positive,
-          }"
-        >
-          {{ state.sentiment }}
-        </div>
       </footer>
       <diary @getTodaysMessage="getTodaysMessage" />
     </div>
@@ -130,10 +124,15 @@ export default {
       console.log(inputMessage.value);
       GetSentiment(inputMessage.value);
 
+      let image = "";
+      if (state.imageUrl) {
+        image = state.imageUrl;
+      }
+
       const message = {
         username: state.username,
         content: inputMessage.value,
-        imageUrl: state.imageUrl,
+        imageUrl: image,
         sentiment: state.sentiment,
         createdAt: Date.now(),
       };
@@ -169,11 +168,34 @@ export default {
           message.sentiment = 0.0;
           let result = res.data.result;
           if (result.method == "SAY") {
-            message.content = result.param_text;
+            if (result.intext.match("風景") || result.intext.match("景色")) {
+              message.content = "心が癒されますね!";
+            } else {
+              message.content = result.param_text;
+            }
           } else if (result.method == "WEATHER") {
-            message.content = `${result.var_test_btsc}度です。`;
+            if (
+              result.param_method_subcat == "HIGH" ||
+              result.param_method_subcat == "LOW" ||
+              result.param_method_subcat == "RAIN"
+            ) {
+              message.content = "https://weather.yahoo.co.jp/weather/";
+            } else {
+              message.content = `${result.var_test_btsc}度です。`;
+            }
+          } else if (result.method == "MAP" || result.method == "LOCAL") {
+            if (result.intext.match("教えて")) {
+              message.content = `${result.param_place}周辺に詳しくないです。。。`;
+            } else if (
+              result.intext.match("きれい") ||
+              result.intext.match("美しい")
+            ) {
+              message.content = "心が癒されますね！";
+            } else {
+              message.content = `${result.param_place}に来れて私も嬉しいです、また来たいですね！`;
+            }
           } else {
-            message.content = "ちょっとなに言ってるか分かんない";
+            message.content = "そうですね、、ちょっと分からないかもです ";
           }
           messagesRef.push(message);
         })
@@ -312,6 +334,11 @@ $veryNegative: #1809eb;
 $negative: #54a6f2;
 $veryPositive: #ff5a2c;
 $positive: #ff8f2c;
+
+.face {
+  margin: 9px 10px 5px 0px;
+  //   margin: 10px, 10px, 10px, 10px;
+}
 
 * {
   font-family: Avenir, Helvetica, Arial, sans-serif;
