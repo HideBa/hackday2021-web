@@ -16,7 +16,6 @@ export default defineComponent({
       messages: [],
     });
     const getTodaysMessage = () => {
-      console.log("hoge-------");
       todaysMessage.messages = emit("getTodaysMessage");
       console.log("messages--------", todaysMessage.messages);
     };

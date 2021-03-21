@@ -66,8 +66,8 @@
           <input type="submit" value="Send" />
         </form>
         <image-upload @sendImageUrl="sendImageUrl" />
+        <diary @getTodaysMessage="getTodaysMessage" />
       </footer>
-      <diary @getTodaysMessage="getTodaysMessage" />
     </div>
   </div>
 </template>
@@ -253,13 +253,10 @@ export default {
     };
 
     const getTodaysMessage = () => {
-      console.log("called----------");
       const today = new Date(Date.now());
       const todaysMessage = state.messages.filter((m) => {
-        const date = new Date(Date.parse(m.createdAt));
-        console.log("today -------", today.getDate);
-        console.log("date-------------", date.getDate);
-        return date.getDate === today.getDate;
+        const date = new Date(m.createdAt);
+        return date.getDate() === today.getDate();
       });
       return todaysMessage;
     };
