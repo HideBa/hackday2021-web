@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import App from "../App.vue";
 import Summary from "../Summary.vue";
+import Message from "../Message.vue";
 
 const routes = [
   {
     path: "/",
     name: "Message",
-    component: App,
+    component: Message,
   },
   {
     path: "/summary",
