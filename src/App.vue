@@ -17,7 +17,17 @@
         </div>
       </form>
     </div>
-    <div class="view chat" v-else>
+    <div
+      class="view"
+      :class="{
+        chat: state.neutral,
+        chatvn: state.veryNegative,
+        chatn: state.negative,
+        chatvp: state.veryPositive,
+        chatp: state.positive,
+      }"
+      v-else
+    >
       <header>
         <button class="logout" @click="Logout">Logout</button>
         <h1>Welcome, {{ state.username }}</h1>
@@ -50,8 +60,18 @@
           />
           <input type="submit" value="Send" />
         </form>
-        <div class="redred">{{ state.sentiment }}</div>
         <image-upload @sendImageUrl="sendImageUrl" />
+        <div
+          :class="{
+            neutral: state.neutral,
+            veryNegative: state.veryNegative,
+            negative: state.negative,
+            veryPositive: state.veryPositive,
+            positive: state.positive,
+          }"
+        >
+          {{ state.sentiment }}
+        </div>
       </footer>
     </div>
   </div>
@@ -79,6 +99,11 @@ export default {
       prevText3: "",
       sentiment: 0.0,
       imageUrl: undefined,
+      neutral: true,
+      veryNegative: false,
+      negative: false,
+      veryPositive: false,
+      positive: false,
     });
 
     const Login = () => {
@@ -100,16 +125,19 @@ export default {
         return;
       }
 
+      console.log(inputMessage.value);
+      GetSentiment(inputMessage.value);
+
       const message = {
         username: state.username,
         content: inputMessage.value,
         imageUrl: state.imageUrl,
+        sentiment: state.sentiment,
       };
 
       messagesRef.push(message);
 
       GetAIText(message, messagesRef);
-      GetSentiment(message.content);
 
       inputMessage.value = "";
 
@@ -135,6 +163,7 @@ export default {
         .get(url)
         .then((res) => {
           message.username = "ぼっちAI";
+          message.sentiment = 0.0;
           let result = res.data.result;
           if (result.method == "SAY") {
             message.content = result.param_text;
@@ -163,6 +192,7 @@ export default {
               username: data[key].username,
               content: data[key].content,
               imageUrl: data[key].imageUrl,
+              sentiment: data[key].sentiment,
             });
           });
           if (messages.length > 1) {
@@ -188,6 +218,7 @@ export default {
         username: state.username,
         content: "image",
         imageUrl: imageUrlPath,
+        sentiment: 0,
       };
       messagesRef.push(message);
 
@@ -198,8 +229,44 @@ export default {
       await getSentiment(message)
         .then((sentiment) => {
           state.sentiment = sentiment.magnitude * sentiment.score;
+          JudgeSentiment(state.sentiment);
         })
         .catch((err) => console.error(err));
+    };
+
+    const JudgeSentiment = (sentiment) => {
+      console.log(sentiment);
+      if (sentiment < -0.5) {
+        (state.neutral = false),
+          (state.veryNegative = true),
+          (state.negative = false),
+          (state.veryPositive = false),
+          (state.positive = false);
+      } else if (sentiment < -0.1) {
+        (state.neutral = false),
+          (state.veryNegative = false),
+          (state.negative = true),
+          (state.veryPositive = false),
+          (state.positive = false);
+      } else if (sentiment < 0.1) {
+        (state.neutral = true),
+          (state.veryNegative = false),
+          (state.negative = false),
+          (state.veryPositive = false),
+          (state.positive = false);
+      } else if (sentiment < 0.5) {
+        (state.neutral = false),
+          (state.veryNegative = false),
+          (state.negative = false),
+          (state.veryPositive = false),
+          (state.positive = true);
+      } else {
+        (state.neutral = false),
+          (state.veryNegative = false),
+          (state.negative = false),
+          (state.veryPositive = true),
+          (state.positive = false);
+      }
     };
 
     onMounted(() => {});
@@ -215,15 +282,19 @@ export default {
       GetMessages,
       GetSentiment,
       sendImageUrl,
+      JudgeSentiment,
     };
   },
 };
 </script>
 
 <style lang="scss">
-.redred {
-  background: red;
-}
+$neutral: #17a717;
+$veryNegative: #1809eb;
+$negative: #54a6f2;
+$veryPositive: #ff5a2c;
+$positive: #ff8f2c;
+
 * {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -232,11 +303,12 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
+
 .view {
   display: flex;
   justify-content: center;
   min-height: 100vh;
-  background-color: #2c7cff;
+  background-color: #17a717;
 
   &.login {
     align-items: center;
@@ -292,7 +364,7 @@ export default {
           display: block;
           width: 100%;
           padding: 10px 15px;
-          background-color: #2c7cff;
+          background-color: #17a717;
           border-radius: 8px;
           color: #fff;
           font-size: 18px;
@@ -300,7 +372,7 @@ export default {
         }
         &:focus-within {
           label {
-            color: #ea526f;
+            color: #17a717;
           }
           input[type="text"] {
             background-color: #fff;
@@ -376,7 +448,7 @@ export default {
             .content {
               color: #fff;
               font-weight: 600;
-              background-color: #2c7cff;
+              background-color: #17a717;
             }
           }
         }
@@ -420,7 +492,467 @@ export default {
           display: block;
           padding: 10px 15px;
           border-radius: 0px 8px 8px 0px;
-          background-color: #2c7cff;
+          background-color: #17a717;
+          color: #fff;
+          font-size: 18px;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+  &.chatvn {
+    flex-direction: column;
+    header {
+      position: relative;
+      display: block;
+      width: 100%;
+      padding: 50px 30px 10px;
+      .logout {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        appearance: none;
+        border: none;
+        outline: none;
+        background: none;
+
+        color: #fff;
+        font-size: 18px;
+        margin-bottom: 10px;
+        text-align: right;
+      }
+      h1 {
+        color: #fff;
+      }
+    }
+    .chat-box {
+      border-radius: 24px 24px 0px 0px;
+      background-color: #fff;
+      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+      flex: 1 1 100%;
+      padding: 30px;
+      .message {
+        display: flex;
+        margin-bottom: 15px;
+
+        .message-inner {
+          .username {
+            color: #888;
+            font-size: 16px;
+            margin-bottom: 5px;
+            padding-left: 15px;
+            padding-right: 15px;
+          }
+          .content {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f3f3f3;
+            border-radius: 999px;
+            color: #333;
+            font-size: 18px;
+            line-height: 1.2em;
+            text-align: left;
+          }
+        }
+        &.user {
+          margin-top: 30px;
+          justify-content: flex-end;
+          text-align: right;
+          .message-inner {
+            max-width: 75%;
+            .content {
+              color: #fff;
+              font-weight: 600;
+              background-color: $veryNegative;
+            }
+          }
+        }
+      }
+    }
+    footer {
+      position: sticky;
+      bottom: 0px;
+      background-color: #fff;
+      padding: 30px;
+      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+      form {
+        display: flex;
+        input[type="text"] {
+          flex: 1 1 100%;
+          appearance: none;
+          border: none;
+          outline: none;
+          background: none;
+          display: block;
+          width: 100%;
+          padding: 10px 15px;
+          border-radius: 8px 0px 0px 8px;
+
+          color: #333;
+          font-size: 18px;
+          box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+          background-color: #f3f3f3;
+          transition: 0.4s;
+          &::placeholder {
+            color: #888;
+            transition: 0.4s;
+          }
+        }
+
+        input[type="submit"] {
+          appearance: none;
+          border: none;
+          outline: none;
+          background: none;
+          display: block;
+          padding: 10px 15px;
+          border-radius: 0px 8px 8px 0px;
+          background-color: $veryNegative;
+          color: #fff;
+          font-size: 18px;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+  &.chatn {
+    flex-direction: column;
+    header {
+      position: relative;
+      display: block;
+      width: 100%;
+      padding: 50px 30px 10px;
+      .logout {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        appearance: none;
+        border: none;
+        outline: none;
+        background: none;
+
+        color: #fff;
+        font-size: 18px;
+        margin-bottom: 10px;
+        text-align: right;
+      }
+      h1 {
+        color: #fff;
+      }
+    }
+    .chat-box {
+      border-radius: 24px 24px 0px 0px;
+      background-color: #fff;
+      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+      flex: 1 1 100%;
+      padding: 30px;
+      .message {
+        display: flex;
+        margin-bottom: 15px;
+
+        .message-inner {
+          .username {
+            color: #888;
+            font-size: 16px;
+            margin-bottom: 5px;
+            padding-left: 15px;
+            padding-right: 15px;
+          }
+          .content {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f3f3f3;
+            border-radius: 999px;
+            color: #333;
+            font-size: 18px;
+            line-height: 1.2em;
+            text-align: left;
+          }
+        }
+        &.user {
+          margin-top: 30px;
+          justify-content: flex-end;
+          text-align: right;
+          .message-inner {
+            max-width: 75%;
+            .content {
+              color: #fff;
+              font-weight: 600;
+              background-color: $negative;
+            }
+          }
+        }
+      }
+    }
+    footer {
+      position: sticky;
+      bottom: 0px;
+      background-color: #fff;
+      padding: 30px;
+      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+      form {
+        display: flex;
+        input[type="text"] {
+          flex: 1 1 100%;
+          appearance: none;
+          border: none;
+          outline: none;
+          background: none;
+          display: block;
+          width: 100%;
+          padding: 10px 15px;
+          border-radius: 8px 0px 0px 8px;
+
+          color: #333;
+          font-size: 18px;
+          box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+          background-color: #f3f3f3;
+          transition: 0.4s;
+          &::placeholder {
+            color: #888;
+            transition: 0.4s;
+          }
+        }
+
+        input[type="submit"] {
+          appearance: none;
+          border: none;
+          outline: none;
+          background: none;
+          display: block;
+          padding: 10px 15px;
+          border-radius: 0px 8px 8px 0px;
+          background-color: $negative;
+          color: #fff;
+          font-size: 18px;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+  &.chatvp {
+    flex-direction: column;
+    header {
+      position: relative;
+      display: block;
+      width: 100%;
+      padding: 50px 30px 10px;
+      .logout {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        appearance: none;
+        border: none;
+        outline: none;
+        background: none;
+
+        color: #fff;
+        font-size: 18px;
+        margin-bottom: 10px;
+        text-align: right;
+      }
+      h1 {
+        color: #fff;
+      }
+    }
+    .chat-box {
+      border-radius: 24px 24px 0px 0px;
+      background-color: #fff;
+      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+      flex: 1 1 100%;
+      padding: 30px;
+      .message {
+        display: flex;
+        margin-bottom: 15px;
+
+        .message-inner {
+          .username {
+            color: #888;
+            font-size: 16px;
+            margin-bottom: 5px;
+            padding-left: 15px;
+            padding-right: 15px;
+          }
+          .content {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f3f3f3;
+            border-radius: 999px;
+            color: #333;
+            font-size: 18px;
+            line-height: 1.2em;
+            text-align: left;
+          }
+        }
+        &.user {
+          margin-top: 30px;
+          justify-content: flex-end;
+          text-align: right;
+          .message-inner {
+            max-width: 75%;
+            .content {
+              color: #fff;
+              font-weight: 600;
+              background-color: $veryPositive;
+            }
+          }
+        }
+      }
+    }
+    footer {
+      position: sticky;
+      bottom: 0px;
+      background-color: #fff;
+      padding: 30px;
+      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+      form {
+        display: flex;
+        input[type="text"] {
+          flex: 1 1 100%;
+          appearance: none;
+          border: none;
+          outline: none;
+          background: none;
+          display: block;
+          width: 100%;
+          padding: 10px 15px;
+          border-radius: 8px 0px 0px 8px;
+
+          color: #333;
+          font-size: 18px;
+          box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+          background-color: #f3f3f3;
+          transition: 0.4s;
+          &::placeholder {
+            color: #888;
+            transition: 0.4s;
+          }
+        }
+
+        input[type="submit"] {
+          appearance: none;
+          border: none;
+          outline: none;
+          background: none;
+          display: block;
+          padding: 10px 15px;
+          border-radius: 0px 8px 8px 0px;
+          background-color: $veryPositive;
+          color: #fff;
+          font-size: 18px;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+  &.chatp {
+    flex-direction: column;
+    header {
+      position: relative;
+      display: block;
+      width: 100%;
+      padding: 50px 30px 10px;
+      .logout {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        appearance: none;
+        border: none;
+        outline: none;
+        background: none;
+
+        color: #fff;
+        font-size: 18px;
+        margin-bottom: 10px;
+        text-align: right;
+      }
+      h1 {
+        color: #fff;
+      }
+    }
+    .chat-box {
+      border-radius: 24px 24px 0px 0px;
+      background-color: #fff;
+      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+      flex: 1 1 100%;
+      padding: 30px;
+      .message {
+        display: flex;
+        margin-bottom: 15px;
+
+        .message-inner {
+          .username {
+            color: #888;
+            font-size: 16px;
+            margin-bottom: 5px;
+            padding-left: 15px;
+            padding-right: 15px;
+          }
+          .content {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f3f3f3;
+            border-radius: 999px;
+            color: #333;
+            font-size: 18px;
+            line-height: 1.2em;
+            text-align: left;
+          }
+        }
+        &.user {
+          margin-top: 30px;
+          justify-content: flex-end;
+          text-align: right;
+          .message-inner {
+            max-width: 75%;
+            .content {
+              color: #fff;
+              font-weight: 600;
+              background-color: $positive;
+            }
+          }
+        }
+      }
+    }
+    footer {
+      position: sticky;
+      bottom: 0px;
+      background-color: #fff;
+      padding: 30px;
+      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+      form {
+        display: flex;
+        input[type="text"] {
+          flex: 1 1 100%;
+          appearance: none;
+          border: none;
+          outline: none;
+          background: none;
+          display: block;
+          width: 100%;
+          padding: 10px 15px;
+          border-radius: 8px 0px 0px 8px;
+
+          color: #333;
+          font-size: 18px;
+          box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+          background-color: #f3f3f3;
+          transition: 0.4s;
+          &::placeholder {
+            color: #888;
+            transition: 0.4s;
+          }
+        }
+
+        input[type="submit"] {
+          appearance: none;
+          border: none;
+          outline: none;
+          background: none;
+          display: block;
+          padding: 10px 15px;
+          border-radius: 0px 8px 8px 0px;
+          background-color: $positive;
           color: #fff;
           font-size: 18px;
           font-weight: 700;
