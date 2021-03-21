@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/database";
+import "firebase/storage";
 
 const config = {
   apiKey: process.env.VUE_APP_APIKEY,
@@ -11,4 +12,6 @@ const config = {
 };
 
 const db = firebase.initializeApp(config);
+
+export const storage = firebase.storage();
 export default db;

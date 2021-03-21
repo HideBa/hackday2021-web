@@ -46,6 +46,7 @@
           <input type="submit" value="Send" />
         </form>
         <div class="redred">{{ state.sentiment }}</div>
+        <image-upload />
       </footer>
     </div>
   </div>
@@ -54,10 +55,12 @@
 <script>
 import { reactive, onMounted, ref } from "vue";
 import axios from "axios";
-import db from "./db";
+import db from "./firebase";
 import getSentiment from "./sentiment";
+import ImageUpload from "./ImageUpload.vue";
 
 export default {
+  components: { ImageUpload },
   setup() {
     const inputUsername = ref("");
     const inputMessage = ref("");
