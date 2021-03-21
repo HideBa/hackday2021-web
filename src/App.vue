@@ -122,10 +122,15 @@ export default {
       console.log(inputMessage.value);
       GetSentiment(inputMessage.value);
 
+      let image = "";
+      if (state.imageUrl) {
+        image = state.imageUrl;
+      }
+
       const message = {
         username: state.username,
         content: inputMessage.value,
-        imageUrl: state.imageUrl,
+        imageUrl: image,
         sentiment: state.sentiment,
       };
 
@@ -160,11 +165,34 @@ export default {
           message.sentiment = 0.0;
           let result = res.data.result;
           if (result.method == "SAY") {
-            message.content = result.param_text;
+            if (result.intext.match("風景") || result.intext.match("景色")) {
+              message.content = "心が癒されますね!";
+            } else {
+              message.content = result.param_text;
+            }
           } else if (result.method == "WEATHER") {
-            message.content = `${result.var_test_btsc}度です。`;
+            if (
+              result.param_method_subcat == "HIGH" ||
+              result.param_method_subcat == "LOW" ||
+              result.param_method_subcat == "RAIN"
+            ) {
+              message.content = "https://weather.yahoo.co.jp/weather/";
+            } else {
+              message.content = `${result.var_test_btsc}度です。`;
+            }
+          } else if (result.method == "MAP" || result.method == "LOCAL") {
+            if (result.intext.match("教えて")) {
+              message.content = `${result.param_place}周辺に詳しくないです。。。`;
+            } else if (
+              result.intext.match("きれい") ||
+              result.intext.match("美しい")
+            ) {
+              message.content = "心が癒されますね！";
+            } else {
+              message.content = `${result.param_place}に来れて私も嬉しいです、また来たいですね！`;
+            }
           } else {
-            message.content = "ちょっとなに言ってるか分かんない";
+            message.content = "そうですね、、ちょっと分からないかもです ";
           }
           messagesRef.push(message);
         })
