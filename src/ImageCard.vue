@@ -14,7 +14,7 @@ export default {
 
 <style scoped>
 .image-card {
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: auto;
 }
 </style>

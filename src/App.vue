@@ -18,8 +18,12 @@
       </form>
     </div>
     <div
-      class="view"
       :class="{
+        view: state.neutral,
+        viewvn: state.veryNegative,
+        viewn: state.negative,
+        viewvp: state.veryPositive,
+        viewp: state.positive,
         chat: state.neutral,
         chatvn: state.veryNegative,
         chatn: state.negative,
@@ -113,6 +117,11 @@ export default {
     const Logout = () => {
       state.username = "";
       state.messages = [];
+      state.neutral = true;
+      state.veryNegative = false;
+      state.negative = false;
+      state.veryPositive = false;
+      state.positive = false;
     };
 
     const SendMessage = () => {
@@ -325,7 +334,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 $neutral: #17a717;
 $veryNegative: #1809eb;
 $negative: #54a6f2;
@@ -461,7 +470,6 @@ $positive: #ff8f2c;
       .message {
         display: flex;
         margin-bottom: 15px;
-
         .message-inner {
           .username {
             color: #888;
@@ -491,6 +499,7 @@ $positive: #ff8f2c;
               color: #fff;
               font-weight: 600;
               background-color: #17a717;
+              min-width: 200px;
             }
           }
         }
@@ -538,6 +547,89 @@ $positive: #ff8f2c;
           color: #fff;
           font-size: 18px;
           font-weight: 700;
+        }
+      }
+    }
+  }
+}
+
+.viewvn {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: $veryNegative;
+
+  &.login {
+    align-items: center;
+    .login-form {
+      display: block;
+      width: 100%;
+      padding: 15px;
+
+      .form-inner {
+        display: block;
+        background-color: #fff;
+        padding: 50px 15px;
+        border-radius: 16px;
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+        h1 {
+          color: #aaa;
+          font-size: 28px;
+          margin-bottom: 30px;
+        }
+        label {
+          display: block;
+          margin-bottom: 5px;
+          color: #aaa;
+          font-size: 16px;
+          transition: 0.4s;
+        }
+        input[type="text"] {
+          appearance: none;
+          border: none;
+          outline: none;
+          background: none;
+          display: block;
+          width: 100%;
+          padding: 10px 15px;
+          border-radius: 8px;
+          margin-bottom: 15px;
+
+          color: #333;
+          font-size: 18px;
+          box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+          background-color: #f3f3f3;
+          transition: 0.4s;
+          &::placeholder {
+            color: #888;
+            transition: 0.4s;
+          }
+        }
+        input[type="submit"] {
+          appearance: none;
+          border: none;
+          outline: none;
+          background: none;
+          display: block;
+          width: 100%;
+          padding: 10px 15px;
+          background-color: #17a717;
+          border-radius: 8px;
+          color: #fff;
+          font-size: 18px;
+          font-weight: 700;
+        }
+        &:focus-within {
+          label {
+            color: #17a717;
+          }
+          input[type="text"] {
+            background-color: #fff;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+            &::placeholder {
+              color: #666;
+            }
+          }
         }
       }
     }
@@ -657,6 +749,89 @@ $positive: #ff8f2c;
       }
     }
   }
+}
+
+.viewn {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: $negative;
+
+  &.login {
+    align-items: center;
+    .login-form {
+      display: block;
+      width: 100%;
+      padding: 15px;
+
+      .form-inner {
+        display: block;
+        background-color: #fff;
+        padding: 50px 15px;
+        border-radius: 16px;
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+        h1 {
+          color: #aaa;
+          font-size: 28px;
+          margin-bottom: 30px;
+        }
+        label {
+          display: block;
+          margin-bottom: 5px;
+          color: #aaa;
+          font-size: 16px;
+          transition: 0.4s;
+        }
+        input[type="text"] {
+          appearance: none;
+          border: none;
+          outline: none;
+          background: none;
+          display: block;
+          width: 100%;
+          padding: 10px 15px;
+          border-radius: 8px;
+          margin-bottom: 15px;
+
+          color: #333;
+          font-size: 18px;
+          box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+          background-color: #f3f3f3;
+          transition: 0.4s;
+          &::placeholder {
+            color: #888;
+            transition: 0.4s;
+          }
+        }
+        input[type="submit"] {
+          appearance: none;
+          border: none;
+          outline: none;
+          background: none;
+          display: block;
+          width: 100%;
+          padding: 10px 15px;
+          background-color: #17a717;
+          border-radius: 8px;
+          color: #fff;
+          font-size: 18px;
+          font-weight: 700;
+        }
+        &:focus-within {
+          label {
+            color: #17a717;
+          }
+          input[type="text"] {
+            background-color: #fff;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+            &::placeholder {
+              color: #666;
+            }
+          }
+        }
+      }
+    }
+  }
   &.chatn {
     flex-direction: column;
     header {
@@ -772,232 +947,398 @@ $positive: #ff8f2c;
       }
     }
   }
-  &.chatvp {
-    flex-direction: column;
-    header {
-      position: relative;
-      display: block;
-      width: 100%;
-      padding: 50px 30px 10px;
-      .logout {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        appearance: none;
-        border: none;
-        outline: none;
-        background: none;
 
-        color: #fff;
-        font-size: 18px;
-        margin-bottom: 10px;
-        text-align: right;
-      }
-      h1 {
-        color: #fff;
-      }
-    }
-    .chat-box {
-      border-radius: 24px 24px 0px 0px;
-      background-color: #fff;
-      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
-      flex: 1 1 100%;
-      padding: 30px;
-      .message {
-        display: flex;
-        margin-bottom: 15px;
+  .viewvp {
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: $veryPositive;
 
-        .message-inner {
-          .username {
-            color: #888;
-            font-size: 16px;
-            margin-bottom: 5px;
-            padding-left: 15px;
-            padding-right: 15px;
+    &.login {
+      align-items: center;
+      .login-form {
+        display: block;
+        width: 100%;
+        padding: 15px;
+
+        .form-inner {
+          display: block;
+          background-color: #fff;
+          padding: 50px 15px;
+          border-radius: 16px;
+          box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+          h1 {
+            color: #aaa;
+            font-size: 28px;
+            margin-bottom: 30px;
           }
-          .content {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #f3f3f3;
-            border-radius: 999px;
+          label {
+            display: block;
+            margin-bottom: 5px;
+            color: #aaa;
+            font-size: 16px;
+            transition: 0.4s;
+          }
+          input[type="text"] {
+            appearance: none;
+            border: none;
+            outline: none;
+            background: none;
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+
             color: #333;
             font-size: 18px;
-            line-height: 1.2em;
-            text-align: left;
+            box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+            background-color: #f3f3f3;
+            transition: 0.4s;
+            &::placeholder {
+              color: #888;
+              transition: 0.4s;
+            }
           }
-        }
-        &.user {
-          margin-top: 30px;
-          justify-content: flex-end;
-          text-align: right;
-          .message-inner {
-            max-width: 75%;
-            .content {
-              color: #fff;
-              font-weight: 600;
-              background-color: $veryPositive;
+          input[type="submit"] {
+            appearance: none;
+            border: none;
+            outline: none;
+            background: none;
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #17a717;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+          }
+          &:focus-within {
+            label {
+              color: #17a717;
+            }
+            input[type="text"] {
+              background-color: #fff;
+              box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+              &::placeholder {
+                color: #666;
+              }
             }
           }
         }
       }
     }
-    footer {
-      position: sticky;
-      bottom: 0px;
-      background-color: #fff;
-      padding: 30px;
-      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
-      form {
-        display: flex;
-        input[type="text"] {
-          flex: 1 1 100%;
+    &.chatvp {
+      flex-direction: column;
+      header {
+        position: relative;
+        display: block;
+        width: 100%;
+        padding: 50px 30px 10px;
+        .logout {
+          position: absolute;
+          top: 15px;
+          right: 15px;
           appearance: none;
           border: none;
           outline: none;
           background: none;
-          display: block;
-          width: 100%;
-          padding: 10px 15px;
-          border-radius: 8px 0px 0px 8px;
 
-          color: #333;
-          font-size: 18px;
-          box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
-          background-color: #f3f3f3;
-          transition: 0.4s;
-          &::placeholder {
-            color: #888;
-            transition: 0.4s;
-          }
-        }
-
-        input[type="submit"] {
-          appearance: none;
-          border: none;
-          outline: none;
-          background: none;
-          display: block;
-          padding: 10px 15px;
-          border-radius: 0px 8px 8px 0px;
-          background-color: $veryPositive;
           color: #fff;
           font-size: 18px;
-          font-weight: 700;
+          margin-bottom: 10px;
+          text-align: right;
+        }
+        h1 {
+          color: #fff;
+        }
+      }
+      .chat-box {
+        border-radius: 24px 24px 0px 0px;
+        background-color: #fff;
+        box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+        flex: 1 1 100%;
+        padding: 30px;
+        .message {
+          display: flex;
+          margin-bottom: 15px;
+
+          .message-inner {
+            .username {
+              color: #888;
+              font-size: 16px;
+              margin-bottom: 5px;
+              padding-left: 15px;
+              padding-right: 15px;
+            }
+            .content {
+              display: inline-block;
+              padding: 10px 20px;
+              background-color: #f3f3f3;
+              border-radius: 999px;
+              color: #333;
+              font-size: 18px;
+              line-height: 1.2em;
+              text-align: left;
+            }
+          }
+          &.user {
+            margin-top: 30px;
+            justify-content: flex-end;
+            text-align: right;
+            .message-inner {
+              max-width: 75%;
+              .content {
+                color: #fff;
+                font-weight: 600;
+                background-color: $veryPositive;
+              }
+            }
+          }
+        }
+      }
+      footer {
+        position: sticky;
+        bottom: 0px;
+        background-color: #fff;
+        padding: 30px;
+        box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+        form {
+          display: flex;
+          input[type="text"] {
+            flex: 1 1 100%;
+            appearance: none;
+            border: none;
+            outline: none;
+            background: none;
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px 0px 0px 8px;
+
+            color: #333;
+            font-size: 18px;
+            box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+            background-color: #f3f3f3;
+            transition: 0.4s;
+            &::placeholder {
+              color: #888;
+              transition: 0.4s;
+            }
+          }
+
+          input[type="submit"] {
+            appearance: none;
+            border: none;
+            outline: none;
+            background: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 0px 8px 8px 0px;
+            background-color: $veryPositive;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+          }
         }
       }
     }
   }
-  &.chatp {
-    flex-direction: column;
-    header {
-      position: relative;
-      display: block;
-      width: 100%;
-      padding: 50px 30px 10px;
-      .logout {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        appearance: none;
-        border: none;
-        outline: none;
-        background: none;
 
-        color: #fff;
-        font-size: 18px;
-        margin-bottom: 10px;
-        text-align: right;
-      }
-      h1 {
-        color: #fff;
-      }
-    }
-    .chat-box {
-      border-radius: 24px 24px 0px 0px;
-      background-color: #fff;
-      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
-      flex: 1 1 100%;
-      padding: 30px;
-      .message {
-        display: flex;
-        margin-bottom: 15px;
+  .viewp {
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: $positive;
 
-        .message-inner {
-          .username {
-            color: #888;
-            font-size: 16px;
-            margin-bottom: 5px;
-            padding-left: 15px;
-            padding-right: 15px;
+    &.login {
+      align-items: center;
+      .login-form {
+        display: block;
+        width: 100%;
+        padding: 15px;
+
+        .form-inner {
+          display: block;
+          background-color: #fff;
+          padding: 50px 15px;
+          border-radius: 16px;
+          box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+          h1 {
+            color: #aaa;
+            font-size: 28px;
+            margin-bottom: 30px;
           }
-          .content {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #f3f3f3;
-            border-radius: 999px;
+          label {
+            display: block;
+            margin-bottom: 5px;
+            color: #aaa;
+            font-size: 16px;
+            transition: 0.4s;
+          }
+          input[type="text"] {
+            appearance: none;
+            border: none;
+            outline: none;
+            background: none;
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+
             color: #333;
             font-size: 18px;
-            line-height: 1.2em;
-            text-align: left;
+            box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+            background-color: #f3f3f3;
+            transition: 0.4s;
+            &::placeholder {
+              color: #888;
+              transition: 0.4s;
+            }
           }
-        }
-        &.user {
-          margin-top: 30px;
-          justify-content: flex-end;
-          text-align: right;
-          .message-inner {
-            max-width: 75%;
-            .content {
-              color: #fff;
-              font-weight: 600;
-              background-color: $positive;
+          input[type="submit"] {
+            appearance: none;
+            border: none;
+            outline: none;
+            background: none;
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #17a717;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+          }
+          &:focus-within {
+            label {
+              color: #17a717;
+            }
+            input[type="text"] {
+              background-color: #fff;
+              box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+              &::placeholder {
+                color: #666;
+              }
             }
           }
         }
       }
     }
-    footer {
-      position: sticky;
-      bottom: 0px;
-      background-color: #fff;
-      padding: 30px;
-      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
-      form {
-        display: flex;
-        input[type="text"] {
-          flex: 1 1 100%;
+    &.chatp {
+      flex-direction: column;
+      header {
+        position: relative;
+        display: block;
+        width: 100%;
+        padding: 50px 30px 10px;
+        .logout {
+          position: absolute;
+          top: 15px;
+          right: 15px;
           appearance: none;
           border: none;
           outline: none;
           background: none;
-          display: block;
-          width: 100%;
-          padding: 10px 15px;
-          border-radius: 8px 0px 0px 8px;
 
-          color: #333;
-          font-size: 18px;
-          box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
-          background-color: #f3f3f3;
-          transition: 0.4s;
-          &::placeholder {
-            color: #888;
-            transition: 0.4s;
-          }
-        }
-
-        input[type="submit"] {
-          appearance: none;
-          border: none;
-          outline: none;
-          background: none;
-          display: block;
-          padding: 10px 15px;
-          border-radius: 0px 8px 8px 0px;
-          background-color: $positive;
           color: #fff;
           font-size: 18px;
-          font-weight: 700;
+          margin-bottom: 10px;
+          text-align: right;
+        }
+        h1 {
+          color: #fff;
+        }
+      }
+      .chat-box {
+        border-radius: 24px 24px 0px 0px;
+        background-color: #fff;
+        box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+        flex: 1 1 100%;
+        padding: 30px;
+        .message {
+          display: flex;
+          margin-bottom: 15px;
+
+          .message-inner {
+            .username {
+              color: #888;
+              font-size: 16px;
+              margin-bottom: 5px;
+              padding-left: 15px;
+              padding-right: 15px;
+            }
+            .content {
+              display: inline-block;
+              padding: 10px 20px;
+              background-color: #f3f3f3;
+              border-radius: 999px;
+              color: #333;
+              font-size: 18px;
+              line-height: 1.2em;
+              text-align: left;
+            }
+          }
+          &.user {
+            margin-top: 30px;
+            justify-content: flex-end;
+            text-align: right;
+            .message-inner {
+              max-width: 75%;
+              .content {
+                color: #fff;
+                font-weight: 600;
+                background-color: $positive;
+              }
+            }
+          }
+        }
+      }
+      footer {
+        position: sticky;
+        bottom: 0px;
+        background-color: #fff;
+        padding: 30px;
+        box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
+        form {
+          display: flex;
+          input[type="text"] {
+            flex: 1 1 100%;
+            appearance: none;
+            border: none;
+            outline: none;
+            background: none;
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px 0px 0px 8px;
+
+            color: #333;
+            font-size: 18px;
+            box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+            background-color: #f3f3f3;
+            transition: 0.4s;
+            &::placeholder {
+              color: #888;
+              transition: 0.4s;
+            }
+          }
+
+          input[type="submit"] {
+            appearance: none;
+            border: none;
+            outline: none;
+            background: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 0px 8px 8px 0px;
+            background-color: $positive;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+          }
         }
       }
     }
