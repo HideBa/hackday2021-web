@@ -30,9 +30,14 @@
             message.username == state.username ? 'message user' : 'message'
           "
         >
-          <div class="message-inner">
-            <div class="username">{{ message.username }}</div>
-            <div class="content">{{ message.content }}</div>
+          <div v-if="!!message.imageUrl">
+            <image-card :imagePath="message.imageUrl" />
+          </div>
+          <div v-else>
+            <div class="message-inner">
+              <div class="username">{{ message.username }}</div>
+              <div class="content">{{ message.content }}</div>
+            </div>
           </div>
         </div>
       </section>
@@ -46,7 +51,7 @@
           <input type="submit" value="Send" />
         </form>
         <div class="redred">{{ state.sentiment }}</div>
-        <image-upload />
+        <image-upload @sendImageUrl="sendImageUrl" />
       </footer>
     </div>
   </div>
@@ -58,9 +63,10 @@ import axios from "axios";
 import db from "./firebase";
 import getSentiment from "./sentiment";
 import ImageUpload from "./ImageUpload.vue";
+import ImageCard from "./ImageCard.vue";
 
 export default {
-  components: { ImageUpload },
+  components: { ImageUpload, ImageCard },
   setup() {
     const inputUsername = ref("");
     const inputMessage = ref("");
@@ -72,6 +78,7 @@ export default {
       prevText2: "",
       prevText3: "",
       sentiment: 0.0,
+      imageUrl: undefined,
     });
 
     const Login = () => {
@@ -96,6 +103,7 @@ export default {
       const message = {
         username: state.username,
         content: inputMessage.value,
+        imageUrl: state.imageUrl,
       };
 
       messagesRef.push(message);
@@ -154,6 +162,7 @@ export default {
               id: key,
               username: data[key].username,
               content: data[key].content,
+              imageUrl: data[key].imageUrl,
             });
           });
           if (messages.length > 1) {
@@ -171,6 +180,18 @@ export default {
           state.messages = messages;
         });
       }
+    };
+
+    const sendImageUrl = (imageUrlPath) => {
+      const messagesRef = db.database().ref(`${state.username}/messages`);
+      const message = {
+        username: state.username,
+        content: "image",
+        imageUrl: imageUrlPath,
+      };
+      messagesRef.push(message);
+
+      GetMessages();
     };
 
     const GetSentiment = async (message) => {
@@ -193,6 +214,7 @@ export default {
       GetAIText,
       GetMessages,
       GetSentiment,
+      sendImageUrl,
     };
   },
 };
