@@ -61,17 +61,6 @@
           <input type="submit" value="Send" />
         </form>
         <image-upload @sendImageUrl="sendImageUrl" />
-        <div
-          :class="{
-            neutral: state.neutral,
-            veryNegative: state.veryNegative,
-            negative: state.negative,
-            veryPositive: state.veryPositive,
-            positive: state.positive,
-          }"
-        >
-          {{ state.sentiment }}
-        </div>
       </footer>
     </div>
   </div>
